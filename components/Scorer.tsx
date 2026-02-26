@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Trash2, RotateCcw } from "lucide-react";
 
+import { createGameObject } from "@/lib/game-utils";
+
 interface Round {
   scores: number[];
 }
@@ -47,28 +49,44 @@ export default function Scorer() {
     rounds.reduce((sum, r) => sum + (r.scores[i] || 0), 0),
   );
 
+  const highestScore = Math.max(...totals);
+
   const reset = () => {
     setRounds([{ scores: players.map(() => 0) }]);
   };
 
+  const finishGame = () => {
+    const game = createGameObject(players, rounds);
+
+    const existing = JSON.parse(localStorage.getItem("game-history") || "[]");
+
+    localStorage.setItem("game-history", JSON.stringify([game, ...existing]));
+
+    alert("Game saved to history!");
+  };
+
   return (
     <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto space-y-4">
-        <h1 className="text-3xl font-bold text-center">🎲 Round Scorer</h1>
+      <div className="max-w-md mx-auto space-y-4 py-4">
+        <h1 className="text-3xl font-bold text-center text-black dark:text-gray-50">
+          🎲 Round Scorer
+        </h1>
 
         <div className="flex gap-2">
           <input
             value={newPlayer}
             onChange={(e) => setNewPlayer(e.target.value)}
             placeholder="Add player"
-            className="flex-1 rounded-xl border px-3 py-2"
+            className="flex-1 rounded-xl border px-3 py-2 dark:border-gray-50 dark:bg-gray-50"
           />
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 200 }}
             onClick={addPlayer}
-            className="bg-black text-white px-4 rounded-xl"
+            className="bg-black text-gray-50 px-4 rounded-xl dark:bg-gray-50 dark:text-black"
           >
             <Plus size={18} />
-          </button>
+          </motion.button>
         </div>
 
         <AnimatePresence>
@@ -100,29 +118,51 @@ export default function Scorer() {
           ))}
         </AnimatePresence>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 200 }}
           onClick={addRound}
-          className="w-full bg-black text-white py-2 rounded-2xl"
+          className="w-full bg-black text-gray-50 py-2 rounded-2xl dark:bg-gray-50 dark:text-black"
         >
           Add Round
-        </button>
+        </motion.button>
 
         <div className="bg-white rounded-2xl shadow p-4">
           <h2 className="font-semibold mb-2">Totals</h2>
           {players.map((p, i) => (
-            <div key={i} className="flex justify-between font-medium">
+            <motion.div
+              animate={
+                totals[i] === highestScore ? { scale: 1.02 } : { scale: 1 }
+              }
+              transition={{ type: "spring", stiffness: 200 }}
+              key={i}
+              className={`flex justify-between font-medium ${
+                totals[i] === highestScore ? "text-green-600" : ""
+              }`}
+            >
               <span>{p}</span>
               <span>{totals[i]}</span>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        <button
-          onClick={reset}
-          className="w-full border py-2 rounded-2xl flex justify-center gap-2"
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 200 }}
+          onClick={finishGame}
+          className="w-full bg-green-600 text-white py-2 rounded-2xl "
         >
-          <RotateCcw size={16} /> Reset Game
-        </button>
+          Finish Game
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 200 }}
+          onClick={reset}
+          className="w-full border py-2 rounded-2xl flex justify-center gap-2 dark:text-gray-50"
+        >
+          <RotateCcw /> Reset Game
+        </motion.button>
       </div>
     </div>
   );

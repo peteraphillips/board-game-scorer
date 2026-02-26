@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎲 Board Game Round Scorer
 
-## Getting Started
+A sharp, mobile‑first round‑by‑round scoring app built with:
 
-First, run the development server:
+- Next.js 14 (App Router)
+- React 18
+- TailwindCSS
+- Framer Motion
+- Vercel deployment ready
+
+## ✨ Features
+
+- Add/remove players
+- Round‑by‑round scoring
+- Automatic totals calculation
+- Animated UI
+- Mobile‑first responsive layout
+- Local persistence (LocalStorage)
+
+---
+
+## 🚀 Getting Started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit: http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌍 Deploy to Vercel
 
-## Learn More
+1. Push this repo to GitHub
+2. Go to https://vercel.com
+3. Import repository
+4. Click Deploy
 
-To learn more about Next.js, take a look at the following resources:
+No additional config required.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🧠 Portfolio Talking Points
 
-## Deploy on Vercel
+- State normalization across dynamic arrays
+- Derived totals computation
+- LocalStorage hydration pattern (SSR safe)
+- Animated list transitions
+- Clean mobile‑first design system
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📸 Suggested Enhancements
+
+- Team mode
+- Dark mode toggle
+- Export scores as CSV
+- PWA support
+- Leaderboard history view
+
+---
+
+MIT License

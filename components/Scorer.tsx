@@ -137,25 +137,59 @@ export default function Scorer() {
                 </button>
               </div>
               {players.map((p, pi) => (
-                <div key={pi} className="flex justify-between">
-                  <span>{p}</span>
-                  <input
-                    type="number"
-                    value={round.scores[pi]}
-                    onChange={(e) => {
-                      const copy = [...rounds];
-                      copy[ri].scores[pi] = Number(e.target.value);
-                      setRounds(copy);
-                    }}
-                    className="w-20 text-center border rounded-lg"
-                  />
+                <div
+                  key={pi}
+                  className="flex items-center justify-between gap-3"
+                >
+                  <span className="text-sm font-medium">{p}</span>
+
+                  <div className="flex items-center bg-gray-100 dark:bg-neutral-700 rounded-xl overflow-hidden shadow-sm">
+                    <motion.button
+                      type="button"
+                      onClick={() => {
+                        const copy = [...rounds];
+                        copy[ri].scores[pi] = (copy[ri].scores[pi] || 0) - 1;
+                        setRounds(copy);
+                      }}
+                      className="px-4 py-3 text-lg active:scale-95 transition"
+                      whileTap={{ backgroundColor: "lightgrey" }}
+                    >
+                      −
+                    </motion.button>
+
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={round.scores[pi] || 0}
+                      onWheel={(e) => e.currentTarget.blur()}
+                      onChange={(e) => {
+                        const copy = [...rounds];
+                        copy[ri].scores[pi] = Number(e.target.value);
+                        setRounds(copy);
+                      }}
+                      className="w-14 text-center bg-transparent outline-none text-base"
+                    />
+
+                    <motion.button
+                      type="button"
+                      onClick={() => {
+                        const copy = [...rounds];
+                        copy[ri].scores[pi] = (copy[ri].scores[pi] || 0) + 1;
+                        setRounds(copy);
+                      }}
+                      className="px-4 py-3 text-lg active:scale-95 transition"
+                      whileTap={{ backgroundColor: "lightgrey" }}
+                    >
+                      +
+                    </motion.button>
+                  </div>
                 </div>
               ))}
             </motion.div>
           ))}
         </AnimatePresence>
 
-        
         <div className="flex justify-start gap-4 flex-wrap">
           {/* Player List with Delete */}
           {players.map((player, index) => (

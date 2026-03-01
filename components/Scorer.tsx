@@ -7,6 +7,7 @@ import { Plus, Trash2, RotateCcw } from "lucide-react";
 import { createGameObject } from "@/lib/game-utils";
 
 interface Round {
+  name: string;
   scores: number[];
 }
 
@@ -21,7 +22,12 @@ export default function Scorer() {
     if (saved) {
       const parsed = JSON.parse(saved);
       setPlayers(parsed.players);
-      setRounds(parsed.rounds);
+      setRounds(
+        parsed.rounds.map((r: any, index: number) => ({
+          name: r.name || `Round ${index + 1}`,
+          scores: r.scores,
+        })),
+      );
     }
   }, []);
 
@@ -49,7 +55,13 @@ export default function Scorer() {
   };
 
   const addRound = () => {
-    setRounds([...rounds, { scores: players.map(() => 0) }]);
+    setRounds([
+      ...rounds,
+      {
+        name: `Round ${rounds.length + 1}`,
+        scores: players.map(() => 0),
+      },
+    ]);
   };
 
   const deleteRound = (index: number) => {
@@ -122,40 +134,82 @@ export default function Scorer() {
         </div>
 
         <AnimatePresence>
-          {rounds.map((round, ri) => (
-            <motion.div
-              key={ri}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-white rounded-2xl shadow p-4 space-y-2"
-            >
-              <div className="flex justify-start gap-2 items-center">
-                <h2 className="font-semibold">Round {rounds.length - ri}</h2>
-                <button onClick={() => deleteRound(ri)}>
-                  <Trash2 size={16} className="text-red-500" />
-                </button>
-              </div>
-              {players.map((p, pi) => (
-                <div key={pi} className="flex justify-between">
-                  <span>{p}</span>
+          {[...rounds].reverse().map((round, reversedIndex) => {
+            const ri = rounds.length - 1 - reversedIndex;
+            return (
+              <motion.div
+                key={ri}
+                className="bg-white p-4 rounded-2xl shadow space-y-2"
+              >
+                <div className="flex justify-between items-center">
                   <input
-                    type="number"
-                    value={round.scores[pi]}
+                    value={round.name}
                     onChange={(e) => {
                       const copy = [...rounds];
-                      copy[ri].scores[pi] = Number(e.target.value);
+                      copy[ri].name = e.target.value;
                       setRounds(copy);
                     }}
-                    className="w-20 text-center border rounded-lg"
+                    className="font-semibold bg-transparent border-b border-transparent focus:border-black dark:focus:border-white outline-none"
                   />
+                  <button onClick={() => deleteRound(ri)}>
+                    <Trash2 size={16} className="text-red-500" />
+                  </button>
                 </div>
-              ))}
-            </motion.div>
-          ))}
+                {players.map((p, pi) => (
+                  <div
+                    key={pi}
+                    className="flex items-center justify-between gap-3"
+                  >
+                    <span className="text-sm font-medium">{p}</span>
+
+                    <div className="flex items-center bg-gray-100 dark:bg-neutral-700 rounded-xl overflow-hidden shadow-sm">
+                      <motion.button
+                        type="button"
+                        onClick={() => {
+                          const copy = [...rounds];
+                          copy[ri].scores[pi] = (copy[ri].scores[pi] || 0) - 1;
+                          setRounds(copy);
+                        }}
+                        className="px-4 py-3 text-lg active:scale-95 transition"
+                        whileTap={{ backgroundColor: "lightgrey" }}
+                      >
+                        −
+                      </motion.button>
+
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        value={round.scores[pi] || 0}
+                        onWheel={(e) => e.currentTarget.blur()}
+                        onChange={(e) => {
+                          const copy = [...rounds];
+                          copy[ri].scores[pi] = Number(e.target.value);
+                          setRounds(copy);
+                        }}
+                        className="w-14 text-center bg-transparent outline-none text-base"
+                      />
+
+                      <motion.button
+                        type="button"
+                        onClick={() => {
+                          const copy = [...rounds];
+                          copy[ri].scores[pi] = (copy[ri].scores[pi] || 0) + 1;
+                          setRounds(copy);
+                        }}
+                        className="px-4 py-3 text-lg active:scale-95 transition"
+                        whileTap={{ backgroundColor: "lightgrey" }}
+                      >
+                        +
+                      </motion.button>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
 
-        
         <div className="flex justify-start gap-4 flex-wrap">
           {/* Player List with Delete */}
           {players.map((player, index) => (

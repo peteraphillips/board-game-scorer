@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export default function EverdellPage() {
   return (
-    <main className="relative transition-all duration-400">
+    <main className="relative bg-gray-50 dark:bg-neutral-900 transition-all duration-400">
       <div className="max-w-md mx-auto py-4">
         <Nav />
       </div>

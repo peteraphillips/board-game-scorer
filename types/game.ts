@@ -1,4 +1,5 @@
 export interface Round {
+  name: string;
   scores: number[];
 }
 

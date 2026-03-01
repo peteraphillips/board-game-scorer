@@ -85,6 +85,25 @@ export default function Scorer() {
           🎲 Scorer
         </h1>
 
+        <div className="bg-white rounded-2xl shadow p-4">
+          <h2 className="font-semibold mb-2">Totals</h2>
+          {players.map((p, i) => (
+            <motion.div
+              animate={
+                totals[i] === highestScore ? { scale: 1.02 } : { scale: 1 }
+              }
+              transition={{ type: "spring", stiffness: 200 }}
+              key={i}
+              className={`flex justify-between font-medium ${
+                totals[i] === highestScore ? "text-emerald-600" : ""
+              }`}
+            >
+              <span>{p}</span>
+              <span>{totals[i]}</span>
+            </motion.div>
+          ))}
+        </div>
+
         <div className="flex gap-2">
           <input
             value={newPlayer}
@@ -102,23 +121,6 @@ export default function Scorer() {
           </motion.button>
         </div>
 
-        <div className="flex justify-start gap-4 flex-wrap">
-          {/* Player List with Delete */}
-          {players.map((player, index) => (
-            <motion.div
-              whileHover={{ y: -2 }}
-              transition={{ type: "spring", stiffness: 200 }}
-              key={index}
-              className="flex justify-start gap-2 items-center bg-white p-2 rounded-xl shadow "
-            >
-              <span>{player}</span>
-              <button onClick={() => deletePlayer(index)}>
-                <Trash2 size={16} className="text-red-500" />
-              </button>
-            </motion.div>
-          ))}
-        </div>
-
         <AnimatePresence>
           {rounds.map((round, ri) => (
             <motion.div
@@ -128,12 +130,12 @@ export default function Scorer() {
               exit={{ opacity: 0, y: -10 }}
               className="bg-white rounded-2xl shadow p-4 space-y-2"
             >
-            <div className="flex justify-start gap-2 items-center">
-              <h2 className="font-semibold">Round {ri + 1}</h2>
-              <button onClick={() => deleteRound(ri)}>
-                <Trash2 size={16} className="text-red-500" />
-              </button>
-            </div>
+              <div className="flex justify-start gap-2 items-center">
+                <h2 className="font-semibold">Round {rounds.length - ri}</h2>
+                <button onClick={() => deleteRound(ri)}>
+                  <Trash2 size={16} className="text-red-500" />
+                </button>
+              </div>
               {players.map((p, pi) => (
                 <div key={pi} className="flex justify-between">
                   <span>{p}</span>
@@ -153,6 +155,24 @@ export default function Scorer() {
           ))}
         </AnimatePresence>
 
+        
+        <div className="flex justify-start gap-4 flex-wrap">
+          {/* Player List with Delete */}
+          {players.map((player, index) => (
+            <motion.div
+              whileHover={{ y: -2 }}
+              transition={{ type: "spring", stiffness: 200 }}
+              key={index}
+              className="flex justify-start gap-2 items-center bg-white p-2 rounded-xl shadow "
+            >
+              <span>{player}</span>
+              <button onClick={() => deletePlayer(index)}>
+                <Trash2 size={16} className="text-red-500" />
+              </button>
+            </motion.div>
+          ))}
+        </div>
+
         <motion.button
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 200 }}
@@ -161,25 +181,6 @@ export default function Scorer() {
         >
           Add Round
         </motion.button>
-
-        <div className="bg-white rounded-2xl shadow p-4">
-          <h2 className="font-semibold mb-2">Totals</h2>
-          {players.map((p, i) => (
-            <motion.div
-              animate={
-                totals[i] === highestScore ? { scale: 1.02 } : { scale: 1 }
-              }
-              transition={{ type: "spring", stiffness: 200 }}
-              key={i}
-              className={`flex justify-between font-medium ${
-                totals[i] === highestScore ? "text-emerald-600" : ""
-              }`}
-            >
-              <span>{p}</span>
-              <span>{totals[i]}</span>
-            </motion.div>
-          ))}
-        </div>
 
         <motion.button
           whileHover={{ scale: 1.02 }}

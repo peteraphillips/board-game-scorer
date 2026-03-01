@@ -22,9 +22,6 @@ export default function Scorer() {
       const parsed = JSON.parse(saved);
       setPlayers(parsed.players);
       setRounds(parsed.rounds);
-    } else {
-      setPlayers(["Player 1", "Player 2"]);
-      setRounds([{ scores: [0, 0] }]);
     }
   }, []);
 
@@ -41,8 +38,22 @@ export default function Scorer() {
     setNewPlayer("");
   };
 
+  const deletePlayer = (index: number) => {
+    const updatedPlayers = players.filter((_, i) => i !== index);
+    const updatedRounds = rounds.map((r) => ({
+      ...r,
+      scores: r.scores.filter((_, i) => i !== index),
+    }));
+    setPlayers(updatedPlayers);
+    setRounds(updatedRounds);
+  };
+
   const addRound = () => {
     setRounds([...rounds, { scores: players.map(() => 0) }]);
+  };
+
+  const deleteRound = (index: number) => {
+    setRounds(rounds.filter((_, i) => i !== index));
   };
 
   const totals = players.map((_, i) =>
@@ -52,7 +63,9 @@ export default function Scorer() {
   const highestScore = Math.max(...totals);
 
   const reset = () => {
-    setRounds([{ scores: players.map(() => 0) }]);
+    setPlayers([]);
+    setRounds([]);
+    localStorage.removeItem("scorer-data");
   };
 
   const finishGame = () => {
@@ -69,7 +82,7 @@ export default function Scorer() {
     <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto space-y-4 py-4">
         <h1 className="text-3xl font-bold text-center text-black dark:text-gray-50">
-          🎲 Round Scorer
+          🎲 Scorer
         </h1>
 
         <div className="flex gap-2">
@@ -89,6 +102,23 @@ export default function Scorer() {
           </motion.button>
         </div>
 
+        <div className="flex justify-start gap-4 flex-wrap">
+          {/* Player List with Delete */}
+          {players.map((player, index) => (
+            <motion.div
+              whileHover={{ y: -2 }}
+              transition={{ type: "spring", stiffness: 200 }}
+              key={index}
+              className="flex justify-start gap-2 items-center bg-white p-2 rounded-xl shadow "
+            >
+              <span>{player}</span>
+              <button onClick={() => deletePlayer(index)}>
+                <Trash2 size={16} className="text-red-500" />
+              </button>
+            </motion.div>
+          ))}
+        </div>
+
         <AnimatePresence>
           {rounds.map((round, ri) => (
             <motion.div
@@ -98,7 +128,12 @@ export default function Scorer() {
               exit={{ opacity: 0, y: -10 }}
               className="bg-white rounded-2xl shadow p-4 space-y-2"
             >
+            <div className="flex justify-start gap-2 items-center">
               <h2 className="font-semibold">Round {ri + 1}</h2>
+              <button onClick={() => deleteRound(ri)}>
+                <Trash2 size={16} className="text-red-500" />
+              </button>
+            </div>
               {players.map((p, pi) => (
                 <div key={pi} className="flex justify-between">
                   <span>{p}</span>
@@ -137,7 +172,7 @@ export default function Scorer() {
               transition={{ type: "spring", stiffness: 200 }}
               key={i}
               className={`flex justify-between font-medium ${
-                totals[i] === highestScore ? "text-green-600" : ""
+                totals[i] === highestScore ? "text-emerald-600" : ""
               }`}
             >
               <span>{p}</span>
@@ -150,7 +185,7 @@ export default function Scorer() {
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 200 }}
           onClick={finishGame}
-          className="w-full bg-green-600 text-white py-2 rounded-2xl "
+          className="w-full bg-emerald-600 text-white py-2 rounded-2xl "
         >
           Finish Game
         </motion.button>

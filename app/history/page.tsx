@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Game } from "@/types/game";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Trash2 } from "lucide-react";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<Game[]>([]);
@@ -12,6 +13,12 @@ export default function HistoryPage() {
     const stored = JSON.parse(localStorage.getItem("game-history") || "[]");
     setHistory(stored);
   }, []);
+
+  const deleteGame = (id: string) => {
+    const updated = history.filter((g) => g.id !== id);
+    setHistory(updated);
+    localStorage.setItem("game-history", JSON.stringify(updated));
+  };
 
   return (
     <div className="min-h-screen p-4 dark:bg-neutral-900">
@@ -34,18 +41,21 @@ export default function HistoryPage() {
           </p>
         )}
 
-        {history.map((game) => (
-          <div
-            key={game.id}
-            className="bg-white dark:bg-gray-50 p-4 rounded-2xl shadow"
-          >
-            <p className="text-sm opacity-60">
-              {new Date(game.date).toLocaleDateString()}
-            </p>
-
-            <p className="font-semibold">Winner: {game.winner}</p>
-
-            <p className="text-sm">Players: {game.players.join(", ")}</p>
+{history.map(game => (
+          <div key={game.id} className="bg-white dark:bg-gray-50 p-4 rounded-2xl shadow">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm opacity-60">
+                  {new Date(game.date).toLocaleDateString()}
+                </p>
+                <p className="font-semibold">Winner: {game.winner}</p>
+                <p className="text-sm">Players: {game.players.join(", ")}</p>
+                <p className="text-sm">Rounds: {game.rounds.length}</p>
+              </div>
+              <button onClick={() => deleteGame(game.id)}>
+                <Trash2 size={18} className="text-red-500" />
+              </button>
+            </div>
           </div>
         ))}
       </div>

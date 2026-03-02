@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Trash2, RotateCcw } from "lucide-react";
 
@@ -90,6 +90,38 @@ export default function Scorer() {
     alert("Game saved to history!");
   };
 
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startAutoChange = (ri: number, pi: number, delta: number) => {
+    // Delay before repeating (feels better on mobile)
+    const timeout = setTimeout(() => {
+      intervalRef.current = setInterval(() => {
+        setRounds((prevRounds: Round[]) =>
+          prevRounds.map((round, roundIndex) => {
+            if (roundIndex !== ri) return round;
+
+            return {
+              ...round,
+              scores: round.scores.map((score, scoreIndex) =>
+                scoreIndex === pi ? (score || 0) + delta : score,
+              ),
+            };
+          }),
+        );
+      }, 80); // faster + smoother
+    }, 20); // hold delay
+
+    intervalRef.current = timeout as unknown as NodeJS.Timeout;
+  };
+
+  const stopAutoChange = () => {
+    if (intervalRef.current) {
+      clearTimeout(intervalRef.current);
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto space-y-4 py-4">
@@ -125,6 +157,7 @@ export default function Scorer() {
           />
           <motion.button
             whileHover={{ scale: 1.02 }}
+            whileTap={{ opacity: 0.6, scale: 1.02 }}
             transition={{ type: "spring", stiffness: 200 }}
             onClick={addPlayer}
             className="bg-black text-gray-50 px-4 rounded-xl dark:bg-gray-50 dark:text-black"
@@ -135,6 +168,7 @@ export default function Scorer() {
 
         <motion.button
           whileHover={{ scale: 1.02 }}
+          whileTap={{ opacity: 0.6, scale: 1.02 }}
           transition={{ type: "spring", stiffness: 200 }}
           onClick={addRound}
           className="w-full bg-black text-gray-50 py-2 rounded-2xl dark:bg-gray-50 dark:text-black"
@@ -169,20 +203,25 @@ export default function Scorer() {
                     key={pi}
                     className="flex items-center justify-between gap-3"
                   >
-                    <span className="text-sm font-medium">{p}</span>
+                    <span className="text-md font-medium">{p}</span>
 
                     <div className="flex items-center bg-gray-100 dark:bg-neutral-700 rounded-xl overflow-hidden shadow-sm">
                       <motion.button
-                        type="button"
-                        onClick={() => {
-                          const copy = [...rounds];
-                          copy[ri].scores[pi] = (copy[ri].scores[pi] || 0) - 1;
-                          setRounds(copy);
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ backgroundColor: "lightgrey", scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 200 }}
+                        onMouseDown={() => startAutoChange(ri, pi, -1)}
+                        onMouseUp={stopAutoChange}
+                        onMouseLeave={stopAutoChange}
+                        onTouchStart={(e) => {
+                          e.preventDefault();
+                          startAutoChange(ri, pi, -1);
                         }}
-                        className="px-4 py-3 text-lg active:scale-95 transition"
-                        whileTap={{ backgroundColor: "lightgrey" }}
+                        onTouchEnd={stopAutoChange}
+                        onTouchCancel={stopAutoChange}
+                        className="px-4 py-2 rounded"
                       >
-                        −
+                        -
                       </motion.button>
 
                       <input
@@ -200,14 +239,19 @@ export default function Scorer() {
                       />
 
                       <motion.button
-                        type="button"
-                        onClick={() => {
-                          const copy = [...rounds];
-                          copy[ri].scores[pi] = (copy[ri].scores[pi] || 0) + 1;
-                          setRounds(copy);
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ backgroundColor: "lightgrey", scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 200 }}
+                        onMouseDown={() => startAutoChange(ri, pi, +1)}
+                        onMouseUp={stopAutoChange}
+                        onMouseLeave={stopAutoChange}
+                        onTouchStart={(e) => {
+                          e.preventDefault();
+                          startAutoChange(ri, pi, +1);
                         }}
-                        className="px-4 py-3 text-lg active:scale-95 transition"
-                        whileTap={{ backgroundColor: "lightgrey" }}
+                        onTouchEnd={stopAutoChange}
+                        onTouchCancel={stopAutoChange}
+                        className="px-4 py-2 rounded"
                       >
                         +
                       </motion.button>
@@ -238,6 +282,7 @@ export default function Scorer() {
 
         <motion.button
           whileHover={{ scale: 1.02 }}
+          whileTap={{ opacity: 0.6, scale: 1.02 }}
           transition={{ type: "spring", stiffness: 200 }}
           onClick={finishGame}
           className="w-full bg-emerald-600 text-white py-2 rounded-2xl "
@@ -247,6 +292,7 @@ export default function Scorer() {
 
         <motion.button
           whileHover={{ scale: 1.02 }}
+          whileTap={{ opacity: 0.6, scale: 1.02 }}
           transition={{ type: "spring", stiffness: 200 }}
           onClick={reset}
           className="w-full border py-2 rounded-2xl flex justify-center gap-2 dark:text-gray-50"

@@ -8,9 +8,10 @@ export default function Nav() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex gap-2 justify-start contain-content">
+    <div className="flex gap-2 justify-center contain-content">
       <motion.button
         whileHover={{ scale: 1.02 }}
+        whileTap={{ backgroundColor: "lightgrey", scale: 1.02 }}
         transition={{ type: "spring", stiffness: 200 }}
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         className="p-2 rounded-xl border text-black dark:text-gray-50"
@@ -21,6 +22,7 @@ export default function Nav() {
       <Link href="/" className="text-sm text-right block">
         <motion.button
           whileHover={{ scale: 1.02 }}
+          whileTap={{ backgroundColor: "lightgrey", scale: 1.02 }}
           transition={{ type: "spring", stiffness: 200 }}
           className="flex gap-2 p-2 rounded-xl border text-black dark:text-gray-50"
         >
@@ -32,6 +34,7 @@ export default function Nav() {
       <Link href="/everdell" className="text-sm text-right block">
         <motion.button
           whileHover={{ scale: 1.02 }}
+          whileTap={{ backgroundColor: "lightgrey", scale: 1.02 }}
           transition={{ type: "spring", stiffness: 200 }}
           className="flex rounded-xl"
         >
@@ -48,6 +51,7 @@ export default function Nav() {
       <Link href="/history" className="text-sm text-right block">
         <motion.button
           whileHover={{ scale: 1.02 }}
+          whileTap={{ backgroundColor: "lightgrey", scale: 1.02 }}
           transition={{ type: "spring", stiffness: 200 }}
           className="flex gap-2 p-2 rounded-xl border text-black dark:text-gray-50"
         >
